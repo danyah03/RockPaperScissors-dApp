@@ -26,9 +26,74 @@ The contract allows a user to:
 
 ---
 
-## ⚙️ Setup Instructions
+## 🧩 Project Setup
 
-### 1️⃣ Clone the Repository
+### 1️⃣ Install Node.js and npm
+If not already installed, download and install from:  
+👉 [https://nodejs.org](https://nodejs.org)
+
+### 2️⃣ Install and Run Local Server
+Install **http-server** globally using npm:
 ```bash
-git clone https://github.com/<your-username>/RockPaperScissors-dApp.git
-cd RockPaperScissors-dApp
+ npm install -g http-server
+
+Run it inside your project folder:
+ http-server
+
+After running, you’ll see something like:
+Available on:
+  http://127.0.0.1:8080
+
+➡️ Open that URL in your browser to view the dApp.
+
+## 🦊 MetaMask Setup Guide
+
+1. Install the **MetaMask** browser extension.  
+2. Create or import your wallet.  
+3. Switch network to **Sepolia Test Network**.  
+4. Get free test ETH from a **Sepolia Faucet**.  
+   *(In this project, 0.05 Sepolia ETH was used.)*  
+5. Connect MetaMask to your HTML page using the **“Connect MetaMask”** button.
+
+---
+
+## 🎮 How to Play
+
+1. Open `index.html` (via http-server).  
+2. Click **“1️⃣ Connect MetaMask”** to link your wallet.  
+3. Choose your move:  
+   - ✊ Rock  
+   - 🖐 Paper  
+   - ✌ Scissors  
+4. Confirm the transaction in MetaMask.  
+5. Wait for confirmation — the result (**Win / Lose / Draw**) will appear on-screen!
+
+---
+
+## 💻 File Structure
+
+| File | Description |
+|------|--------------|
+| `RockPaperScissors.sol` | Solidity smart contract source code |
+| `index.html` | Frontend web interface using ethers.js |
+| `README.md` | Documentation and setup instructions |
+
+---
+
+## 🌐 Technologies Used
+
+- **Solidity** – Smart contract programming  
+- **Remix IDE** – For compilation & deployment  
+- **MetaMask** – Wallet for blockchain interaction  
+- **Sepolia Testnet** – Ethereum test network  
+- **Ethers.js (v5.7.2)** – JavaScript blockchain library  
+- **HTML / CSS / JavaScript** – Front-end development  
+
+---
+
+## 🧾 Author Information
+
+**Name:** Danyah Sohail  
+**Project:** Blockchain / Decentralized Application (dApp)  
+**Date:** November 2025
+
