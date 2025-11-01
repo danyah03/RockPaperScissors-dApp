@@ -36,13 +36,18 @@ If not already installed, download and install from:
 Install **http-server** globally using npm:
 ```bash
  npm install -g http-server
+```
 
 Run it inside your project folder:
+```bash
  http-server
+ ```
 
 After running, you’ll see something like:
+```bash
 Available on:
   http://127.0.0.1:8080
+```
 
 ➡️ Open that URL in your browser to view the dApp.
 
