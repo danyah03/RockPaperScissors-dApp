@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>✊🖐✌ Rock Paper Scissors dApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f9e1f7, #e3d4f3, #d4c2f0);
+      color: #4a235a;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(120, 40, 140, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #6c3483;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #b57edc, #a066c9);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      margin: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+      box-shadow: 0 3px 8px rgba(120, 40, 140, 0.3);
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #a066c9, #b57edc);
+      transform: translateY(-2px);
+    }
+
+    .status {
+      background: #ffffffb0;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d7bde2;
+      margin: 10px 0;
+      font-size: 15px;
+      box-shadow: 0 2px 6px rgba(150, 50, 200, 0.1);
+    }
+
+    .result {
+      background: #f4e1f7;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #dab6eb;
+      margin-top: 15px;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(150, 50, 200, 0.1);
+    }
+
+    .move-btns {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    #connectBtn {
+      display: block;
+      margin: 0 auto 15px;
+      background: linear-gradient(135deg, #c08adf, #a678d6);
+      font-weight: bold;
+    }
+
+    #connectBtn:hover {
+      background: linear-gradient(135deg, #a678d6, #c08adf);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>💅 Rock Paper Scissors on Ethereum (Sepolia)</h2>
+
+  <button id="connectBtn">✨ Connect MetaMask</button>
+
+  <p id="walletStatus" class="status">Wallet: ❌ Not connected</p>
+  <p id="networkStatus" class="status">Network: ❌ Unknown</p>
+
+  <div class="move-btns">
+    <button onclick="playGame(1)"> ✊ Rock</button>
+    <button onclick="playGame(2)"> 🖐 Paper</button>
+    <button onclick="playGame(3)"> ✌ Scissors</button>
+  </div>
+
+  <div id="gameStatus" class="status">Status: ⏳ Waiting...</div>
+  <div id="resultBox" class="result"></div>
+
+  <script>
+    // ===========================================================
+    // 🌐 CONFIGURATION
+    // ===========================================================
+    const contractAddress = "0xB7d22Ded7B2E5FfBf2C67f8Dc4120E5075F13746"; // Replace with yours
+    const abi = [
+      {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "player", "type": "address" },
+          { "indexed": false, "internalType": "uint8", "name": "playerMove", "type": "uint8" },
+          { "indexed": false, "internalType": "uint8", "name": "computerMove", "type": "uint8" },
+          { "indexed": false, "internalType": "string", "name": "result", "type": "string" }
+        ],
+        "name": "GamePlayed",
+        "type": "event"
+      },
+      {
+        "inputs": [{ "internalType": "uint8", "name": "_move", "type": "uint8" }],
+        "name": "play",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getResult",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getMoves",
+        "outputs": [
+          { "internalType": "string", "name": "", "type": "string" },
+          { "internalType": "string", "name": "", "type": "string" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ];
+
+    let provider, signer, contract, account;
+
+    // ===========================================================
+    // 🦊 CONNECT TO METAMASK
+    // ===========================================================
+    document.getElementById("connectBtn").addEventListener("click", async () => {
+      try {
+        if (!window.ethereum) {
+          alert("⚠️ MetaMask not found. Please install it first.");
+          return;
+        }
+
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = provider.getSigner();
+        account = await signer.getAddress();
+        contract = new ethers.Contract(contractAddress, abi, signer);
+
+        const network = await provider.getNetwork();
+
+        document.getElementById("walletStatus").innerHTML = `✅ Wallet Connected: ${account}`;
+        document.getElementById("networkStatus").innerHTML = `🌐 Network: ${network.name}`;
+
+        console.log("Connected to:", account);
+      } catch (err) {
+        console.error(err);
+        alert("❌ MetaMask connection failed: " + err.message);
+      }
+    });
+
+    // ===========================================================
+    // 🎮 PLAY GAME FUNCTION
+    // ===========================================================
+    async function playGame(move) {
+      if (!contract) {
+        alert("⚠️ Please connect MetaMask first!");
+        return;
+      }
+
+      const moveNames = ["None", "Rock", "Paper", "Scissors"];
+      document.getElementById("gameStatus").textContent = `Playing: ${moveNames[move]}...`;
+
+      try {
+        const tx = await contract.play(move);
+        document.getElementById("gameStatus").textContent = "⏳ Waiting for transaction...";
+        await tx.wait();
+
+        const result = await contract.getResult();
+        const moves = await contract.getMoves();
+
+        document.getElementById("gameStatus").textContent = "💖 Game completed!";
+        document.getElementById("resultBox").innerHTML = `
+          <b>🧍 Your Move:</b> ${moves[0]} <br>
+          <b>💻 Computer Move:</b> ${moves[1]} <br>
+          <b>🏆 Result:</b> ${result}
+        `;
+      } catch (err) {
+        console.error(err);
+        alert("❌ Transaction failed: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
