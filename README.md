@@ -64,7 +64,7 @@ Available on:
 
 ## 🎮 How to Play
 
-1. Open `index.html` (via http-server).  
+1. Open `RockPaperScissors.html` (via http-server).  
 2. Click **“1️⃣ Connect MetaMask”** to link your wallet.  
 3. Choose your move:  
    - ✊ Rock  
@@ -80,7 +80,7 @@ Available on:
 | File | Description |
 |------|--------------|
 | `RockPaperScissors.sol` | Solidity smart contract source code |
-| `index.html` | Frontend web interface using ethers.js |
+| `RockPaperScissors.html` | Frontend web interface using ethers.js |
 | `README.md` | Documentation and setup instructions |
 
 ---
